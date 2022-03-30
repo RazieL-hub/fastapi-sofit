@@ -27,7 +27,7 @@ services:
       - 15672:15672
     volumes:
       - rabbitmq:/var/lib/rabbitmq
-      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./core/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     networks:
       - main
 
