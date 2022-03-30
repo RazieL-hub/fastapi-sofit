@@ -1,8 +1,14 @@
+import os
+
 from fastapi import FastAPI
+
+from core.settings import mail
 
 app = FastAPI()
 
 
 @app.get('/')
 async def root():
-    return {'message': 'Hello World!'}
+    print(type(mail))
+    print(mail)
+    return {'message': mail}
