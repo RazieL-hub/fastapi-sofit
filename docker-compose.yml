@@ -1,0 +1,37 @@
+version: "1.0"
+
+services:
+
+  web:
+    build: .
+    container_name: sofit-web
+    restart: always
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - rabbitmq
+    networks:
+      - main
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: sofit-rabbitmq
+    hostname: rabbitMQ
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    networks:
+      - main
+
+networks:
+  main:
+volumes:
+  rabbitmq:
