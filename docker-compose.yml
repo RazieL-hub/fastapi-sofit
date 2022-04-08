@@ -4,7 +4,7 @@ services:
 
   postgres:
     image: postgres:latest
-    container_name: sofit-mailing-list-postgres
+    container_name: sofit-postgres
     ports:
       - "5433:5432"
     volumes:
@@ -17,19 +17,22 @@ services:
 
   web:
     build: .
-    container_name: sofit-mailing-list-web
+    container_name: sofit-web
     restart: always
     command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
     volumes:
       - .:/code
     ports:
       - 8000:8000
+    depends_on:
+      - kafka
+      - zookeeper
     networks:
       - main
 
   kafka:
     image: 'bitnami/kafka:latest'
-    container_name: sofit-mailing-list-kafka
+    container_name: sofit-kafka
     hostname: kafka
     ports:
       - 9092:9092
@@ -40,7 +43,7 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka2:9092,EXTERNAL://localhost:9093
       - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
     depends_on:
       - zookeeper
@@ -50,7 +53,7 @@ services:
 
   zookeeper:
     image: 'bitnami/zookeeper:latest'
-    container_name: sofit-mailing-list-zookeeper
+    container_name: sofit-zookeeper
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     ports:
@@ -58,23 +61,24 @@ services:
     restart: always
     networks:
       - main
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: sofit-mailing-list-rabbitmq
-    hostname: rabbitMQ
-    restart: always
-    ports:
-      - 5672:5672
-      - 15672:15672
-    volumes:
-      - rabbitmq:/var/lib/rabbitmq
-      - ./core/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-    networks:
-      - main
+
+#  rabbitmq:
+#    image: rabbitmq:3-management
+#    container_name: sofit-mailing-list-rabbitmq
+#    hostname: rabbitMQ
+#    restart: always
+#    ports:
+#      - 5672:5672
+#      - 15672:15672
+#    volumes:
+#      - rabbitmq:/var/lib/rabbitmq
+#      - ./core/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+#    networks:
+#      - main
 
 networks:
   main:
 
 volumes:
   pgdata:
-  rabbitmq:
+#  rabbitmq:

@@ -1,4 +1,3 @@
-import email
 import os
 from dotenv import load_dotenv
 from fastapi_mail import ConnectionConfig
@@ -6,7 +5,7 @@ from fastapi_mail import ConnectionConfig
 load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TEMPLATE_FOLDER_EMAIL = os.path.join(BASE_DIR, 'apps', 'email', 'templates')
+TEMPLATE_FOLDER_EMAIL = os.path.join(BASE_DIR, 'templates')
 
 # CREDENTIALS for EMAIL
 conf = ConnectionConfig(
@@ -23,4 +22,8 @@ conf = ConnectionConfig(
 
 # CREDENTIALS for TELEGRAM
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-CHAT_ID = os.getenv('')
+CHAT_ID = os.getenv('CHAT_ID')
+
+#KAFKA
+KAFKA_TOPIC = os.getenv('KAFKA_TOPIC')
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
